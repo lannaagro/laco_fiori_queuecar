@@ -1,0 +1,51 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified">
+    <Dialog
+        id="uploadDialog"
+        title="{i18n>uploadFarmerTitle}"
+        contentWidth="40rem"
+        resizable="true"
+        draggable="true"
+        busy="{upload>/busy}"
+        busyIndicatorDelay="0"
+        afterClose=".onAfterClose">
+        <content>
+            <f:SimpleForm id="uploadForm" editable="true" layout="ResponsiveGridLayout"
+                labelSpanL="3" labelSpanM="3" columnsL="1" columnsM="1">
+                <Label id="fileLabel" text="{i18n>uploadFarmerFile}" required="true"/>
+                <u:FileUploader
+                    id="fileUploader"
+                    width="100%"
+                    sendXHR="false"
+                    fileType="xlsx,xls,csv"
+                    placeholder="{i18n>uploadFarmerFilePlaceholder}"
+                    change=".onFileChange"
+                    typeMissmatch=".onTypeMissmatch"/>
+                <Label id="rowCountLabel" text="{i18n>uploadFarmerRowsFound}" visible="{= ${upload>/rowCount} > 0 }"/>
+                <Text id="rowCount" text="{upload>/rowCount}" visible="{= ${upload>/rowCount} > 0 }"/>
+            </f:SimpleForm>
+
+            <VBox id="resultBox" class="sapUiSmallMargin" visible="{upload>/hasResult}">
+                <MessageStrip id="resultStrip"
+                    showIcon="true"
+                    type="{= ${upload>/result/failed} > 0 ? 'Warning' : 'Success' }"
+                    text="{
+                        parts: ['upload>/result/total', 'upload>/result/succeeded', 'upload>/result/failed'],
+                        formatter: '.formatSummary'
+                    }"/>
+                <Label id="logLabel" text="{i18n>uploadFarmerLog}" class="sapUiSmallMarginTop"/>
+                <TextArea id="logText" value="{upload>/result/log}" editable="false" width="100%" rows="8" growing="true" growingMaxLines="20"/>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button id="uploadButton" type="Emphasized" text="{i18n>uploadFarmerUpload}"
+                enabled="{= ${upload>/rowCount} > 0 }" press=".onUpload"/>
+        </beginButton>
+        <endButton>
+            <Button id="closeButton" text="{i18n>uploadFarmerClose}" press=".onClose"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
